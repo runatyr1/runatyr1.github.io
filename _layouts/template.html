@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Asciinema Player Control Panel</title>
+  <title>{{ page.title }}</title>
   <style>
     body, html {
       background-color: #000000;
@@ -184,7 +184,7 @@
 
   <script>
     // Initial player setup
-    const castId = "0bqIp5LPEraEEHX4MPEPCQqL3";
+    const castId = "{{ page.castId }}";
     let currentScript = null;
     
     // Toggle more settings visibility

@@ -1,1 +1,16 @@
--
+---
+layout: default
+title: All Casts
+---
+
+<h1>All Casts</h1>
+
+<ul>
+  {% for page in site.pages %}
+    {% if page.castId %}
+      <li>
+        <a href="{{ page.url | relative_url }}">{{ page.title }}</a>
+      </li>
+    {% endif %}
+  {% endfor %}
+</ul>
