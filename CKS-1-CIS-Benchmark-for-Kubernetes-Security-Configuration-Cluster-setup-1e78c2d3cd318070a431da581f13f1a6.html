@@ -206,10 +206,10 @@
           customInput.focus();
         }
         
-        // Set rows to 15 if mobile is selected, 30 otherwise
+        // Set rows to 25 if mobile is selected, 30 otherwise
         const rowsInput = document.getElementById('rows');
         if (this.value === '60') { // Mobile option (60 cols)
-          rowsInput.value = 15;
+          rowsInput.value = 25;
         } else if (rowsInput.value === '15') { // Only reset if it was 15
           rowsInput.value = 30;
         }
