@@ -140,7 +140,6 @@
 <body>
   <div class="control-panel">
     <div class="main-controls">
-      <span class="settings-label">Settings:</span>
       <div class="radio-group">
         <label class="radio-option">
           <input type="radio" name="display-mode" value="desktop" checked> Desktop
@@ -152,7 +151,6 @@
           <input type="radio" name="display-mode" value="mobile-horizontal"> Mobile (Horizontal)
         </label>
       </div>
-      <button id="applySettings">Apply</button>
     </div>
     
     <div class="more-settings-toggle">More settings</div>
@@ -161,28 +159,25 @@
       <div class="setting-row">
         <label class="radio-option">
           <input type="radio" name="display-mode" value="custom"> Custom:
-          <div style="display: inline-block; margin-left: 5px;">
-            <div class="setting-item">
-              <label>Columns:</label>
-              <input type="number" id="customCols" value="80" min="30" max="200" style="width: 50px;" disabled>
-            </div>
-            <div class="setting-item">
-              <label>Rows:</label>
-              <input type="number" id="customRows" value="30" min="10" max="100" style="width: 50px;" disabled>
-            </div>
-          </div>
         </label>
       </div>
-      <div class="setting-row">
-        <div class="setting-item">
-          <label>Speed:</label>
-          <input type="number" id="speed" value="1.3" min="0.1" max="5" step="0.1">
-        </div>
-        <div class="setting-item">
-          <label>Idle limit:</label>
-          <input type="number" id="idleTimeLimit" value="3" min="0" max="10" step="0.1">
-        </div>
+      <div class="setting-item">
+        <label>Columns:</label>
+        <input type="number" id="customCols" value="80" min="30" max="200" style="width: 50px;" disabled>
       </div>
+      <div class="setting-item">
+        <label>Rows:</label>
+        <input type="number" id="customRows" value="30" min="10" max="100" style="width: 50px;" disabled>
+      </div>
+      <div class="setting-item">
+        <label>Speed:</label>
+        <input type="number" id="speed" value="1.3" min="0.1" max="5" step="0.1">
+      </div>
+      <div class="setting-item">
+        <label>Idle limit:</label>
+        <input type="number" id="idleTimeLimit" value="3" min="0" max="10" step="0.1">
+      </div>
+      <button id="applyCustomSettings">Apply Custom Settings</button>
     </div>
   </div>
   
@@ -195,12 +190,12 @@
     const castId = "{{ page.castId }}";
     let currentScript = null;
     
-    // Display mode presets (cols and rows for each mode)
+    // Display mode presets (cols, rows, speed, and idle limit for each mode)
     const displayModes = {
-      'desktop': { cols: 120, rows: 30 },
-      'mobile-vertical': { cols: 50, rows: 25 },
-      'mobile-horizontal': { cols: 70, rows: 12 },
-      'custom': { cols: null, rows: null } // Will be set from input fields
+      'desktop': { cols: 120, rows: 30, speed: 1.3, idleTimeLimit: 3 },
+      'mobile-vertical': { cols: 50, rows: 25, speed: 1.3, idleTimeLimit: 3 },
+      'mobile-horizontal': { cols: 70, rows: 12, speed: 1.3, idleTimeLimit: 3 },
+      'custom': { cols: null, rows: null, speed: null, idleTimeLimit: null } // Will be set from input fields
     };
     
     // Toggle more settings visibility
@@ -217,13 +212,24 @@
       radio.addEventListener('change', function() {
         const customColsInput = document.getElementById('customCols');
         const customRowsInput = document.getElementById('customRows');
+        const speedInput = document.getElementById('speed');
+        const idleTimeLimitInput = document.getElementById('idleTimeLimit');
         const isCustomMode = this.value === 'custom';
         
+        // Enable/disable custom inputs
         customColsInput.disabled = !isCustomMode;
         customRowsInput.disabled = !isCustomMode;
         
         if (isCustomMode) {
+          // Focus on the first custom input when custom is selected
           customColsInput.focus();
+        } else {
+          // Load player instantly for the 3 main presets
+          // And reset speed and idle limit to preset defaults
+          const mode = this.value;
+          speedInput.value = displayModes[mode].speed;
+          idleTimeLimitInput.value = displayModes[mode].idleTimeLimit;
+          loadPlayer();
         }
       });
     });
@@ -241,20 +247,20 @@
       
       // Get selected mode
       const selectedMode = document.querySelector('input[name="display-mode"]:checked').value;
-      let cols, rows;
+      let cols, rows, speed, idleTimeLimit;
       
-      // Set cols and rows based on selected mode
+      // Set parameters based on selected mode
       if (selectedMode === 'custom') {
         cols = document.getElementById('customCols').value;
         rows = document.getElementById('customRows').value;
+        speed = document.getElementById('speed').value;
+        idleTimeLimit = document.getElementById('idleTimeLimit').value;
       } else {
         cols = displayModes[selectedMode].cols;
         rows = displayModes[selectedMode].rows;
+        speed = displayModes[selectedMode].speed;
+        idleTimeLimit = displayModes[selectedMode].idleTimeLimit;
       }
-      
-      // Get other parameter values
-      const speed = document.getElementById('speed').value;
-      const idleTimeLimit = document.getElementById('idleTimeLimit').value;
       
       // Create new script element
       const script = document.createElement('script');
@@ -276,8 +282,12 @@
       console.log(`Player loaded with: cols=${cols}, rows=${rows}, speed=${speed}, idle_time_limit=${idleTimeLimit}`);
     }
     
-    // Apply settings button handler
-    document.getElementById('applySettings').addEventListener('click', function() {
+    // Apply custom settings button handler
+    document.getElementById('applyCustomSettings').addEventListener('click', function() {
+      // Make sure custom mode is selected when Apply Custom Settings is clicked
+      const customRadio = document.querySelector('input[name="display-mode"][value="custom"]');
+      customRadio.checked = true;
+      
       loadPlayer();
       
       // Hide the advanced settings when Apply is clicked
