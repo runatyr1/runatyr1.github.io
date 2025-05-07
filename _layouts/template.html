@@ -143,10 +143,13 @@
       <span class="settings-label">Settings:</span>
       <div class="radio-group">
         <label class="radio-option">
-          <input type="radio" name="cols" value="120" checked> Desktop
+          <input type="radio" name="display-mode" value="desktop" checked> Desktop
         </label>
         <label class="radio-option">
-          <input type="radio" name="cols" value="60"> Mobile
+          <input type="radio" name="display-mode" value="mobile-vertical"> Mobile (Vertical)
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="display-mode" value="mobile-horizontal"> Mobile (Horizontal)
         </label>
       </div>
       <button id="applySettings">Apply</button>
@@ -157,15 +160,19 @@
     <div class="advanced-settings">
       <div class="setting-row">
         <label class="radio-option">
-          <input type="radio" name="cols" value="custom"> Custom columns:
-          <input type="number" id="customCols" value="80" min="30" max="200" style="margin-left: 5px; width: 50px;" disabled>
+          <input type="radio" name="display-mode" value="custom"> Custom:
+          <div style="display: inline-block; margin-left: 5px;">
+            <div class="setting-item">
+              <label>Columns:</label>
+              <input type="number" id="customCols" value="80" min="30" max="200" style="width: 50px;" disabled>
+            </div>
+            <div class="setting-item">
+              <label>Rows:</label>
+              <input type="number" id="customRows" value="30" min="10" max="100" style="width: 50px;" disabled>
+            </div>
+          </div>
         </label>
       </div>
-      <div class="setting-row">
-        <div class="setting-item">
-          <label>Rows:</label>
-          <input type="number" id="rows" value="30" min="10" max="100">
-        </div>
       <div class="setting-row">
         <div class="setting-item">
           <label>Speed:</label>
@@ -188,6 +195,14 @@
     const castId = "{{ page.castId }}";
     let currentScript = null;
     
+    // Display mode presets (cols and rows for each mode)
+    const displayModes = {
+      'desktop': { cols: 120, rows: 30 },
+      'mobile-vertical': { cols: 50, rows: 25 },
+      'mobile-horizontal': { cols: 70, rows: 12 },
+      'custom': { cols: null, rows: null } // Will be set from input fields
+    };
+    
     // Toggle more settings visibility
     const moreSettingsToggle = document.querySelector('.more-settings-toggle');
     const advancedSettings = document.querySelector('.advanced-settings');
@@ -197,22 +212,18 @@
       this.classList.toggle('active');
     });
     
-    // Function to toggle custom columns input
-    document.querySelectorAll('input[name="cols"]').forEach(radio => {
+    // Function to toggle custom inputs
+    document.querySelectorAll('input[name="display-mode"]').forEach(radio => {
       radio.addEventListener('change', function() {
-        const customInput = document.getElementById('customCols');
-        customInput.disabled = this.value !== 'custom';
+        const customColsInput = document.getElementById('customCols');
+        const customRowsInput = document.getElementById('customRows');
+        const isCustomMode = this.value === 'custom';
         
-        if (this.value === 'custom') {
-          customInput.focus();
-        }
+        customColsInput.disabled = !isCustomMode;
+        customRowsInput.disabled = !isCustomMode;
         
-        // Set rows to 25 if mobile is selected, 30 otherwise
-        const rowsInput = document.getElementById('rows');
-        if (this.value === '60') { // Mobile option (60 cols)
-          rowsInput.value = 25;
-        } else if (rowsInput.value === '15') { // Only reset if it was 15
-          rowsInput.value = 30;
+        if (isCustomMode) {
+          customColsInput.focus();
         }
       });
     });
@@ -228,19 +239,20 @@
       const playerContainer = document.getElementById('player-container');
       playerContainer.innerHTML = '';
       
-      // Get selected columns value
-      let cols;
-      const selectedOption = document.querySelector('input[name="cols"]:checked').value;
+      // Get selected mode
+      const selectedMode = document.querySelector('input[name="display-mode"]:checked').value;
+      let cols, rows;
       
-      // If custom option is selected, use the custom value
-      if (selectedOption === 'custom') {
+      // Set cols and rows based on selected mode
+      if (selectedMode === 'custom') {
         cols = document.getElementById('customCols').value;
+        rows = document.getElementById('customRows').value;
       } else {
-        cols = selectedOption;
+        cols = displayModes[selectedMode].cols;
+        rows = displayModes[selectedMode].rows;
       }
       
       // Get other parameter values
-      const rows = document.getElementById('rows').value;
       const speed = document.getElementById('speed').value;
       const idleTimeLimit = document.getElementById('idleTimeLimit').value;
       
