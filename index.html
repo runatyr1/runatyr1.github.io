@@ -1,16 +1,117 @@
 ---
 layout: default
-title: All Casts
+title: Main site at pietro.top
 ---
 
-<h1>All Casts</h1>
+<h1><a href="https://pietro.top" class="site-title">Main site at pietro.top</a></h1>
 
-<ul>
+<ul class="cast-list">
   {% for page in site.pages %}
     {% if page.castId %}
-      <li>
-        <a href="{{ page.url | relative_url }}">{{ page.title }}</a>
+      <li class="cast-item">
+        <a href="{{ page.url | relative_url }}" class="cast-link">{{ page.title }}</a>
       </li>
     {% endif %}
   {% endfor %}
 </ul>
+
+<style>
+  :root {
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --accent-color: #bb86fc;
+    --secondary-color: #03dac6;
+    --card-bg: #1e1e1e;
+    --hover-color: #cf9fff;
+  }
+  
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    line-height: 1.6;
+  }
+  
+  h1 {
+    margin-bottom: 2rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  
+  .site-title {
+    color: var(--accent-color);
+    text-decoration: none;
+    position: relative;
+    transition: color 0.3s ease;
+  }
+  
+  .site-title:hover {
+    color: var(--hover-color);
+  }
+  
+  .site-title::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: -4px;
+    left: 0;
+    background-color: var(--accent-color);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+    transform-origin: bottom right;
+  }
+  
+  .site-title:hover::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+  }
+  
+  .cast-list {
+    list-style-type: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  
+  .cast-item {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .cast-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .cast-link {
+    display: block;
+    color: var(--text-color);
+    text-decoration: none;
+    padding: 1.2rem;
+    border-left: 3px solid var(--secondary-color);
+    transition: background-color 0.2s ease;
+  }
+  
+  .cast-link:hover {
+    background-color: rgba(187, 134, 252, 0.1);
+  }
+  
+  @media (max-width: 600px) {
+    .cast-list {
+      grid-template-columns: 1fr;
+    }
+    
+    body {
+      padding: 1rem;
+    }
+  }
+</style>
