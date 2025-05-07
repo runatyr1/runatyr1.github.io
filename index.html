@@ -3,10 +3,13 @@ layout: default
 title: Main site at pietro.top
 ---
 
-<h1><a href="https://pietro.top" class="site-title">Main site at pietro.top</a></h1>
+<h1><a href="pietro.top" class="site-title">Main site at pietro.top</a></h1>
+
+<!-- Sort pages alphabetically by title -->
+{% assign sorted_pages = site.pages | sort: 'title' %}
 
 <ul class="cast-list">
-  {% for page in site.pages %}
+  {% for page in sorted_pages %}
     {% if page.castId %}
       <li class="cast-item">
         <a href="{{ page.url | relative_url }}" class="cast-link">{{ page.title }}</a>
@@ -21,7 +24,6 @@ title: Main site at pietro.top
     --text-color: #e0e0e0;
     --accent-color: #bb86fc;
     --secondary-color: #03dac6;
-    --card-bg: #1e1e1e;
     --hover-color: #cf9fff;
   }
   
@@ -73,43 +75,33 @@ title: Main site at pietro.top
   .cast-list {
     list-style-type: none;
     padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1.5rem;
     margin-top: 2rem;
   }
   
   .cast-item {
-    background-color: var(--card-bg);
-    border-radius: 8px;
-    overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 0.8rem;
+    border-left: 3px solid var(--secondary-color);
+    transition: transform 0.2s ease;
+    padding-left: 0;
   }
   
   .cast-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    transform: translateX(5px);
   }
   
   .cast-link {
     display: block;
     color: var(--text-color);
     text-decoration: none;
-    padding: 1.2rem;
-    border-left: 3px solid var(--secondary-color);
-    transition: background-color 0.2s ease;
+    padding: 0.7rem 1rem;
+    transition: color 0.2s ease;
   }
   
   .cast-link:hover {
-    background-color: rgba(187, 134, 252, 0.1);
+    color: var(--accent-color);
   }
   
   @media (max-width: 600px) {
-    .cast-list {
-      grid-template-columns: 1fr;
-    }
-    
     body {
       padding: 1rem;
     }
